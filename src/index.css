@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FCFBF6;
+  --color-cream-dark: #F5F0E6;
+  --color-mint: #A8DADC;
+  --color-mint-light: #C5E8EA;
+  --color-mint-dark: #7BBFC2;
+  --color-gold: #C4B088;
+  --color-gold-light: #D9CDB0;
+  --color-gold-dark: #A89060;
+  --color-surface: #FFFFFF;
+  --color-soft-red: #E08080;
+  --color-soft-red-light: #F2C4C4;
+  --color-charcoal: #2D2D2D;
+  --color-charcoal-light: #6B6B6B;
+  --color-muted: #9CA3AF;
+  --color-muted-bg: #F3F4F6;
+  --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --radius-card: 24px;
+  --radius-btn: 16px;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.animate-subtle-pulse {
+  animation: subtlePulse 2s ease-in-out infinite;
+}
+
+/* Staggered animation delays for para cards */
+.stagger-1 { animation-delay: 0.02s; }
+.stagger-2 { animation-delay: 0.04s; }
+.stagger-3 { animation-delay: 0.06s; }
+.stagger-4 { animation-delay: 0.08s; }
+.stagger-5 { animation-delay: 0.10s; }
+.stagger-6 { animation-delay: 0.12s; }
+.stagger-7 { animation-delay: 0.14s; }
+.stagger-8 { animation-delay: 0.16s; }
+.stagger-9 { animation-delay: 0.18s; }
+.stagger-10 { animation-delay: 0.20s; }
+.stagger-11 { animation-delay: 0.22s; }
+.stagger-12 { animation-delay: 0.24s; }
+.stagger-13 { animation-delay: 0.26s; }
+.stagger-14 { animation-delay: 0.28s; }
+.stagger-15 { animation-delay: 0.30s; }
+.stagger-16 { animation-delay: 0.32s; }
+.stagger-17 { animation-delay: 0.34s; }
+.stagger-18 { animation-delay: 0.36s; }
+.stagger-19 { animation-delay: 0.38s; }
+.stagger-20 { animation-delay: 0.40s; }
+.stagger-21 { animation-delay: 0.42s; }
+.stagger-22 { animation-delay: 0.44s; }
+.stagger-23 { animation-delay: 0.46s; }
+.stagger-24 { animation-delay: 0.48s; }
+.stagger-25 { animation-delay: 0.50s; }
+.stagger-26 { animation-delay: 0.52s; }
+.stagger-27 { animation-delay: 0.54s; }
+.stagger-28 { animation-delay: 0.56s; }
+.stagger-29 { animation-delay: 0.58s; }
+.stagger-30 { animation-delay: 0.60s; }
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out, fadeIn 0.3s ease-out;
+}

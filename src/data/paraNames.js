@@ -1,0 +1,36 @@
+/** 
+ * All 30 para (juz) names of the Quran.
+ * Each entry has the para number, Arabic name (first word), and English transliteration.
+ */
+export const PARA_NAMES = [
+  { number: 1,  arabic: 'آلم',           english: 'Alif Lam Meem' },
+  { number: 2,  arabic: 'سَيَقُولُ',       english: 'Sayaqool' },
+  { number: 3,  arabic: 'تِلْكَ الرُّسُلُ',  english: 'Tilkal Rusul' },
+  { number: 4,  arabic: 'لَنْ تَنَالُوا',    english: 'Lan Tanaloo' },
+  { number: 5,  arabic: 'وَالْمُحْصَنَاتُ',  english: 'Wal Muhsanat' },
+  { number: 6,  arabic: 'لَا يُحِبُّ اللَّهُ', english: 'La Yuhibbullah' },
+  { number: 7,  arabic: 'وَإِذَا سَمِعُوا',  english: 'Wa Iza Sami\'oo' },
+  { number: 8,  arabic: 'وَلَوْ أَنَّنَا',    english: 'Wa Lau Annana' },
+  { number: 9,  arabic: 'قَالَ الْمَلَأُ',   english: 'Qalal Malao' },
+  { number: 10, arabic: 'وَاعْلَمُوا',      english: 'Wa A\'lamoo' },
+  { number: 11, arabic: 'يَعْتَذِرُونَ',     english: 'Ya\'taziroon' },
+  { number: 12, arabic: 'وَمَا مِنْ دَابَّةٍ', english: 'Wa Ma Min Dabbatin' },
+  { number: 13, arabic: 'وَمَا أُبَرِّئُ',   english: 'Wa Ma Ubarri\'u' },
+  { number: 14, arabic: 'رُبَمَا',          english: 'Rubama' },
+  { number: 15, arabic: 'سُبْحَانَ الَّذِي',  english: 'Subhanallazi' },
+  { number: 16, arabic: 'قَالَ أَلَمْ',      english: 'Qal Alam' },
+  { number: 17, arabic: 'اقْتَرَبَ',        english: 'Iqtaraba' },
+  { number: 18, arabic: 'قَدْ أَفْلَحَ',     english: 'Qad Aflaha' },
+  { number: 19, arabic: 'وَقَالَ الَّذِينَ',  english: 'Wa Qalallazina' },
+  { number: 20, arabic: 'أَمَّنْ خَلَقَ',    english: 'A\'man Khalaq' },
+  { number: 21, arabic: 'اتْلُ مَا أُوحِيَ', english: 'Utlu Ma Oohiya' },
+  { number: 22, arabic: 'وَمَنْ يَقْنُتْ',   english: 'Wa Man Yaqnut' },
+  { number: 23, arabic: 'وَمَا لِيَ',       english: 'Wa Mali' },
+  { number: 24, arabic: 'فَمَنْ أَظْلَمُ',   english: 'Faman Azlam' },
+  { number: 25, arabic: 'إِلَيْهِ يُرَدُّ',   english: 'Ilaihi Yuraddu' },
+  { number: 26, arabic: 'حم',             english: 'Ha Meem' },
+  { number: 27, arabic: 'قَالَ فَمَا خَطْبُكُمْ', english: 'Qala Fama Khatbukum' },
+  { number: 28, arabic: 'قَدْ سَمِعَ اللَّهُ', english: 'Qad Sami Allahu' },
+  { number: 29, arabic: 'تَبَارَكَ الَّذِي',  english: 'Tabarakallazi' },
+  { number: 30, arabic: 'عَمَّ',            english: 'Amma' },
+]
