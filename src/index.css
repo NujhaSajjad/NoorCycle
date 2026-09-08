@@ -1,28 +1,58 @@
 @import "tailwindcss";
 
+/* ===================================================
+   IVORIA — Design System
+   Palette: blush cream, sage green, dusty rose, dark plum
+=================================================== */
+
 @theme {
-  --color-cream: #FCFBF6;
-  --color-cream-dark: #F5F0E6;
-  --color-mint: #A8DADC;
-  --color-mint-light: #C5E8EA;
-  --color-mint-dark: #7BBFC2;
-  --color-gold: #C4B088;
-  --color-gold-light: #D9CDB0;
-  --color-gold-dark: #A89060;
+  /* Backgrounds */
+  --color-blush: #FBF5F4;
+  --color-blush-deep: #F5EAE8;
+  --color-blush-card: #FDF8F7;
+
+  /* Decorative blobs */
+  --color-sage: #C8D4C0;
+  --color-sage-light: #DCE8D4;
+  --color-rose-blob: #F0DEDE;
+
+  /* Brand */
+  --color-plum: #2D1B2D;
+  --color-plum-light: #4A3050;
+  --color-rose: #C4748A;
+  --color-rose-light: #D99BAB;
+  --color-rose-dark: #A85C72;
+  --color-rose-muted: #E8C5CF;
+
+  /* States */
+  --color-completed-bg: #FDF0F0;
+  --color-completed-border: #F0D0D0;
+  --color-completed-text: #C4748A;
+  --color-available-bg: #FFFFFF;
+  --color-pending-bg: #FAF4F6;
+
+  /* Neutral */
+  --color-text: #2D1B2D;
+  --color-text-muted: #9B7E8B;
+  --color-text-light: #C4A8B4;
   --color-surface: #FFFFFF;
-  --color-soft-red: #E08080;
-  --color-soft-red-light: #F2C4C4;
-  --color-charcoal: #2D2D2D;
-  --color-charcoal-light: #6B6B6B;
-  --color-muted: #9CA3AF;
-  --color-muted-bg: #F3F4F6;
-  --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --radius-card: 24px;
-  --radius-btn: 16px;
+  --color-border: #EDE0E4;
+  --color-border-light: #F5EBEE;
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Radii */
+  --radius-card: 20px;
+  --radius-btn: 50px;
+  --radius-pill: 100px;
 }
 
-/* Base styles */
-* {
+/* ===================================================
+   BASE
+=================================================== */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -30,141 +60,148 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: var(--font-family-sans);
-  background-color: var(--color-cream);
-  color: var(--color-charcoal);
+  font-family: var(--font-body);
+  background-color: var(--color-blush);
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
 }
 
-/* Animations */
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================================================
+   ANIMATIONS
+=================================================== */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
-
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 @keyframes subtlePulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  50%       { opacity: 0.6; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+.animate-fade-in-up  { animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-fade-in     { animation: fadeIn  0.4s ease both; }
+.animate-scale-in    { animation: scaleIn 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-slide-up    { animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-pulse-slow  { animation: subtlePulse 2.5s ease-in-out infinite; }
+.animate-spin        { animation: spin 0.8s linear infinite; }
+
+/* Stagger delays for para card list */
+.stagger-1  { animation-delay: 0.05s; }
+.stagger-2  { animation-delay: 0.08s; }
+.stagger-3  { animation-delay: 0.11s; }
+.stagger-4  { animation-delay: 0.14s; }
+.stagger-5  { animation-delay: 0.17s; }
+.stagger-6  { animation-delay: 0.20s; }
+.stagger-7  { animation-delay: 0.23s; }
+.stagger-8  { animation-delay: 0.26s; }
+.stagger-9  { animation-delay: 0.29s; }
+.stagger-10 { animation-delay: 0.32s; }
+.stagger-11 { animation-delay: 0.35s; }
+.stagger-12 { animation-delay: 0.38s; }
+.stagger-13 { animation-delay: 0.41s; }
+.stagger-14 { animation-delay: 0.44s; }
+.stagger-15 { animation-delay: 0.47s; }
+.stagger-16 { animation-delay: 0.50s; }
+.stagger-17 { animation-delay: 0.53s; }
+.stagger-18 { animation-delay: 0.56s; }
+.stagger-19 { animation-delay: 0.59s; }
+.stagger-20 { animation-delay: 0.62s; }
+.stagger-21 { animation-delay: 0.65s; }
+.stagger-22 { animation-delay: 0.68s; }
+.stagger-23 { animation-delay: 0.71s; }
+.stagger-24 { animation-delay: 0.74s; }
+.stagger-25 { animation-delay: 0.77s; }
+.stagger-26 { animation-delay: 0.80s; }
+.stagger-27 { animation-delay: 0.83s; }
+.stagger-28 { animation-delay: 0.86s; }
+.stagger-29 { animation-delay: 0.89s; }
+.stagger-30 { animation-delay: 0.92s; }
+
+/* ===================================================
+   DECORATIVE BLOBS
+=================================================== */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.blob-sage-tr {
+  width: clamp(120px, 30vw, 200px);
+  height: clamp(120px, 30vw, 200px);
+  background: var(--color-sage-light);
+  top: -40px;
+  right: -40px;
+  opacity: 0.7;
+}
+.blob-sage-br {
+  width: clamp(80px, 20vw, 140px);
+  height: clamp(80px, 20vw, 140px);
+  background: var(--color-sage);
+  bottom: 80px;
+  right: -20px;
+  opacity: 0.5;
+}
+.blob-rose-bl {
+  width: clamp(100px, 25vw, 160px);
+  height: clamp(100px, 25vw, 160px);
+  background: var(--color-rose-blob);
+  bottom: -20px;
+  left: -30px;
+  opacity: 0.6;
 }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+/* ===================================================
+   SCROLLBAR
+=================================================== */
+::-webkit-scrollbar        { width: 4px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--color-rose-muted); border-radius: 4px; }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.3s ease-out forwards;
-}
-
-.animate-slide-down {
-  animation: slideDown 0.3s ease-out forwards;
-}
-
-.animate-subtle-pulse {
-  animation: subtlePulse 2s ease-in-out infinite;
-}
-
-/* Staggered animation delays for para cards */
-.stagger-1 { animation-delay: 0.02s; }
-.stagger-2 { animation-delay: 0.04s; }
-.stagger-3 { animation-delay: 0.06s; }
-.stagger-4 { animation-delay: 0.08s; }
-.stagger-5 { animation-delay: 0.10s; }
-.stagger-6 { animation-delay: 0.12s; }
-.stagger-7 { animation-delay: 0.14s; }
-.stagger-8 { animation-delay: 0.16s; }
-.stagger-9 { animation-delay: 0.18s; }
-.stagger-10 { animation-delay: 0.20s; }
-.stagger-11 { animation-delay: 0.22s; }
-.stagger-12 { animation-delay: 0.24s; }
-.stagger-13 { animation-delay: 0.26s; }
-.stagger-14 { animation-delay: 0.28s; }
-.stagger-15 { animation-delay: 0.30s; }
-.stagger-16 { animation-delay: 0.32s; }
-.stagger-17 { animation-delay: 0.34s; }
-.stagger-18 { animation-delay: 0.36s; }
-.stagger-19 { animation-delay: 0.38s; }
-.stagger-20 { animation-delay: 0.40s; }
-.stagger-21 { animation-delay: 0.42s; }
-.stagger-22 { animation-delay: 0.44s; }
-.stagger-23 { animation-delay: 0.46s; }
-.stagger-24 { animation-delay: 0.48s; }
-.stagger-25 { animation-delay: 0.50s; }
-.stagger-26 { animation-delay: 0.52s; }
-.stagger-27 { animation-delay: 0.54s; }
-.stagger-28 { animation-delay: 0.56s; }
-.stagger-29 { animation-delay: 0.58s; }
-.stagger-30 { animation-delay: 0.60s; }
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-gold-light);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold);
-}
-
-/* Toast notification */
+/* ===================================================
+   TOAST
+=================================================== */
 .toast {
   position: fixed;
-  bottom: 24px;
+  bottom: env(safe-area-inset-bottom, 24px);
+  bottom: calc(env(safe-area-inset-bottom) + 24px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  animation: slideDown 0.3s ease-out, fadeIn 0.3s ease-out;
+  width: calc(100% - 48px);
+  max-width: 360px;
+  animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
 }
+
+/* ===================================================
+   UTILITY: safe-area for notched phones
+=================================================== */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.safe-top    { padding-top:    env(safe-area-inset-top, 0px); }

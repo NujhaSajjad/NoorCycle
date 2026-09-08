@@ -1,97 +1,117 @@
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import logo from '../assets/logo.png'
 
-/**
- * Welcome page with two entry points:
- * 1. "Start Your Own Quran Cycle" → Coming Soon placeholder
- * 2. "Contribute to Today's Quran" → Navigates to /cycle
- */
 export default function WelcomePage() {
   const navigate = useNavigate()
   const [showComingSoon, setShowComingSoon] = useState(false)
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col items-center justify-center px-6 py-12">
-      {/* Logo and branding */}
-      <div className="animate-fade-in-up text-center max-w-md">
-        <div className="mb-8 flex justify-center">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gold-light/30 to-mint-light/30 flex items-center justify-center shadow-lg p-1">
-            <img
-              src={logo}
-              alt="NoorCycle logo"
-              className="w-full h-full object-contain rounded-full"
-            />
-          </div>
+    <div className="relative min-h-dvh bg-blush overflow-hidden flex flex-col items-center justify-between px-6 py-12 safe-top safe-bottom">
+
+      {/* Decorative blobs */}
+      <div className="blob blob-sage-tr" />
+      <div className="blob blob-sage-br" />
+      <div className="blob blob-rose-bl" />
+
+      {/* Main content — centred */}
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 w-full max-w-sm mx-auto text-center gap-0">
+
+        {/* Logo */}
+        <div className="animate-fade-in-up mb-10" style={{ animationDelay: '0s' }}>
+          <img
+            src={logo}
+            alt="Ivoria logo"
+            className="w-24 h-24 object-contain mx-auto"
+          />
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-charcoal mb-3 tracking-tight">
-          NoorCycle
+        {/* Brand name */}
+        <h1
+          className="animate-fade-in-up font-display text-4xl tracking-[0.35em] font-semibold text-plum mb-3"
+          style={{ animationDelay: '0.12s', letterSpacing: '0.32em' }}
+        >
+          IVORIA
         </h1>
 
-        <p className="text-lg text-charcoal-light mb-12 font-medium">
-          Read together. Grow together.
-        </p>
-
-        {/* Action buttons */}
-        <div className="space-y-4 w-full max-w-xs mx-auto">
-          {/* Primary: Start Your Own Quran Cycle (Coming Soon) */}
-          <button
-            onClick={() => setShowComingSoon(true)}
-            className="w-full h-[56px] bg-surface border-2 border-gold-light/50 text-charcoal font-semibold rounded-[16px] transition-all duration-300 hover:border-gold hover:shadow-md active:scale-[0.98] flex items-center justify-center gap-2.5 group"
-            id="btn-start-own-cycle"
-          >
-            <Sparkles
-              size={18}
-              className="text-gold group-hover:text-gold-dark transition-colors"
-            />
-            Start Your Own Quran Cycle
-          </button>
-
-          {/* Secondary: Contribute to Today's Quran */}
-          <button
-            onClick={() => navigate('/cycle')}
-            className="w-full h-[56px] bg-gradient-to-r from-gold to-gold-dark hover:from-gold-dark hover:to-gold text-white font-semibold rounded-[16px] transition-all duration-300 hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2.5"
-            id="btn-contribute-today"
-          >
-            <BookOpen size={18} />
-            Contribute to Today's Quran
-          </button>
+        {/* Tagline with decorative lines */}
+        <div
+          className="animate-fade-in-up flex items-center gap-3 mb-5"
+          style={{ animationDelay: '0.22s' }}
+        >
+          <div className="h-px w-8 bg-rose opacity-60" />
+          <p className="text-xs tracking-[0.2em] uppercase font-medium text-rose">
+            Read together. Grow together.
+          </p>
+          <div className="h-px w-8 bg-rose opacity-60" />
         </div>
 
-        {/* Footer tagline */}
-        <p className="mt-16 text-sm text-charcoal-light/50 font-medium">
-          Complete one Quran together, every day
+        {/* Subtitle */}
+        <p
+          className="animate-fade-in-up text-sm text-text-muted leading-relaxed mb-16"
+          style={{ animationDelay: '0.30s' }}
+        >
+          Complete the Quran together,<br />one para at a time.
         </p>
+
+        {/* Buttons */}
+        <div
+          className="animate-fade-in-up w-full space-y-3"
+          style={{ animationDelay: '0.40s' }}
+        >
+          {/* Primary */}
+          <button
+            onClick={() => setShowComingSoon(true)}
+            className="w-full h-[52px] bg-rose hover:bg-rose-dark active:scale-[0.98] text-white font-medium text-sm tracking-wide rounded-pill transition-all duration-200 shadow-sm"
+            id="btn-start-own-cycle"
+          >
+            Start a Quran Cycle
+          </button>
+
+          {/* Secondary */}
+          <button
+            onClick={() => navigate('/cycle')}
+            className="w-full h-[52px] bg-surface border border-border hover:border-rose active:scale-[0.98] text-text font-medium text-sm tracking-wide rounded-pill transition-all duration-200"
+            id="btn-contribute-today"
+          >
+            Contribute to Today's Cycle
+          </button>
+        </div>
       </div>
 
-      {/* Coming Soon Modal */}
+      {/* Coming Soon overlay */}
       {showComingSoon && (
         <div
-          className="fixed inset-0 bg-charcoal/40 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-fade-in"
+          className="fixed inset-0 bg-plum/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-5 animate-fade-in"
           onClick={() => setShowComingSoon(false)}
         >
           <div
-            className="bg-surface rounded-[24px] p-8 max-w-sm w-full text-center shadow-2xl animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
+            className="bg-surface rounded-[24px] p-8 w-full max-w-sm text-center shadow-2xl animate-slide-up"
+            onClick={e => e.stopPropagation()}
           >
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gold-light/40 to-mint-light/40 flex items-center justify-center mx-auto mb-5">
-              <Sparkles size={28} className="text-gold-dark" />
+            <div className="w-14 h-14 rounded-full bg-blush-deep flex items-center justify-center mx-auto mb-5">
+              <img src={logo} alt="" className="w-9 h-9 object-contain" />
             </div>
-            <h2 className="text-2xl font-bold text-charcoal mb-2">
+            <h2 className="font-display text-2xl font-semibold text-plum mb-2">
               Coming Soon
             </h2>
-            <p className="text-charcoal-light mb-6 leading-relaxed">
+            <p className="text-sm text-text-muted mb-7 leading-relaxed">
               The ability to start your own Quran cycle is on the way.
               For now, join today's community cycle!
             </p>
             <button
+              onClick={() => navigate('/cycle')}
+              className="w-full h-[48px] bg-rose hover:bg-rose-dark text-white font-medium text-sm rounded-pill transition-all duration-200 mb-3"
+              id="btn-join-today-from-modal"
+            >
+              Contribute to Today's Cycle
+            </button>
+            <button
               onClick={() => setShowComingSoon(false)}
-              className="w-full h-[48px] bg-cream hover:bg-cream-dark text-charcoal font-semibold rounded-[16px] transition-all duration-200"
+              className="text-sm text-text-muted hover:text-text transition-colors"
               id="btn-close-coming-soon"
             >
-              Got it
+              Maybe later
             </button>
           </div>
         </div>

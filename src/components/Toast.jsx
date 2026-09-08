@@ -1,26 +1,14 @@
 import { X } from 'lucide-react'
 
-/**
- * Toast notification component for error and info messages.
- */
 export default function Toast({ message, type = 'error', onClose }) {
   if (!message) return null
-
-  const bgColor = type === 'error' ? 'bg-soft-red' : type === 'success' ? 'bg-mint-dark' : 'bg-gold'
-
+  const bg = type === 'error' ? 'bg-rose-dark' : type === 'success' ? 'bg-plum' : 'bg-text-muted'
   return (
     <div className="toast">
-      <div
-        className={`${bgColor} text-white px-5 py-3 rounded-[16px] shadow-lg flex items-center gap-3 max-w-sm`}
-      >
-        <span className="text-sm font-medium flex-1">{message}</span>
-        <button
-          onClick={onClose}
-          className="hover:opacity-70 transition-opacity flex-shrink-0"
-          aria-label="Dismiss notification"
-          id="toast-dismiss"
-        >
-          <X size={16} />
+      <div className={`${bg} text-white px-4 py-3 rounded-[14px] shadow-lg flex items-center gap-3`}>
+        <span className="text-sm font-medium flex-1 leading-snug">{message}</span>
+        <button onClick={onClose} className="opacity-70 hover:opacity-100 transition-opacity flex-shrink-0" id="toast-close">
+          <X size={15} />
         </button>
       </div>
     </div>

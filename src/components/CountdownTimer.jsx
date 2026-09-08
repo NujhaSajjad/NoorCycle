@@ -1,61 +1,35 @@
 import { useState, useEffect } from 'react'
 import { Clock } from 'lucide-react'
 
-/**
- * Live countdown timer for a para reservation.
- * Displays HH:MM:SS and updates every second.
- * Shows a pulse animation in the last 30 minutes.
- */
 export default function CountdownTimer({ expiresAt }) {
   const [timeLeft, setTimeLeft] = useState('')
   const [isUrgent, setIsUrgent] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
 
   useEffect(() => {
-    function updateTimer() {
-      const now = new Date()
-      const expiry = new Date(expiresAt)
-      const diff = expiry - now
-
+    function tick() {
+      const diff = new Date(expiresAt) - new Date()
       if (diff <= 0) {
         setTimeLeft('Expired')
         setIsExpired(true)
         return
       }
-
-      const hours = Math.floor(diff / (1000 * 60 * 60))
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-      setTimeLeft(
-        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-      )
-
-      // Urgent when less than 30 minutes
+      const h = Math.floor(diff / 3600000)
+      const m = Math.floor((diff % 3600000) / 60000)
+      const s = Math.floor((diff % 60000) / 1000)
+      setTimeLeft(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`)
       setIsUrgent(diff < 30 * 60 * 1000)
     }
-
-    updateTimer()
-    const interval = setInterval(updateTimer, 1000)
-    return () => clearInterval(interval)
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
   }, [expiresAt])
 
-  if (isExpired) {
-    return (
-      <span className="inline-flex items-center gap-1.5 text-soft-red font-medium text-sm">
-        <Clock size={14} />
-        Reservation expired
-      </span>
-    )
-  }
-
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 font-mono font-semibold text-sm ${
-        isUrgent ? 'text-soft-red animate-subtle-pulse' : 'text-charcoal-light'
-      }`}
-    >
-      <Clock size={14} className={isUrgent ? 'text-soft-red' : 'text-gold'} />
+    <span className={`inline-flex items-center gap-1 font-mono text-xs font-medium ${
+      isExpired ? 'text-rose' : isUrgent ? 'text-rose animate-pulse-slow' : 'text-text-muted'
+    }`}>
+      <Clock size={11} />
       {timeLeft}
     </span>
   )

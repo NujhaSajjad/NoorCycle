@@ -1,29 +1,19 @@
-/**
- * Animated progress bar showing the daily Quran completion progress.
- */
 export default function ProgressBar({ completed, total }) {
-  const percentage = total > 0 ? (completed / total) * 100 : 0
-
+  const pct = total > 0 ? (completed / total) * 100 : 0
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-semibold text-charcoal">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-sm font-semibold text-text">
           {completed} / {total} paras completed
         </span>
-        <span className="text-sm font-medium text-charcoal-light">
-          {Math.round(percentage)}%
+        <span className="text-xs font-medium text-text-muted">
+          {Math.round(pct)}%
         </span>
       </div>
-      <div className="w-full h-3 bg-cream-dark rounded-full overflow-hidden">
+      <div className="w-full h-1.5 bg-rose-muted/40 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
-          style={{
-            width: `${percentage}%`,
-            background:
-              percentage === 100
-                ? 'linear-gradient(90deg, #A8DADC, #7BBFC2)'
-                : 'linear-gradient(90deg, #C4B088, #A8DADC)',
-          }}
+          style={{ width: `${pct}%`, background: 'var(--color-rose)' }}
         />
       </div>
     </div>
