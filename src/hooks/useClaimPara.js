@@ -4,13 +4,13 @@ import { getUserId } from '../lib/userId'
 import { getCycleDate } from './useCycleDate'
 
 /**
- * Hook to claim a para via the atomic RPC function.
+ * Hook to claim a quarter-para slot via the atomic RPC function.
  */
 export function useClaimPara() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  async function claimPara(paraNumber) {
+  async function claimPara(paraNumber, quarter) {
     if (!supabase) {
       setError('Supabase is not configured. Please add your credentials to .env.local')
       return null
@@ -21,14 +21,15 @@ export function useClaimPara() {
 
     try {
       const { data, error: rpcError } = await supabase.rpc('claim_para', {
-        p_user_id: getUserId(),
+        p_user_id:     getUserId(),
         p_para_number: paraNumber,
-        p_cycle_date: getCycleDate(),
+        p_quarter:     quarter,
+        p_cycle_date:  getCycleDate(),
       })
 
       if (rpcError) {
         // Parse friendly error messages from the RPC function
-        const message = rpcError.message || 'Failed to claim this para'
+        const message = rpcError.message || 'Failed to claim this slot'
         setError(message)
         return null
       }

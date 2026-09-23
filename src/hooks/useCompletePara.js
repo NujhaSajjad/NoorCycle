@@ -4,13 +4,13 @@ import { getUserId } from '../lib/userId'
 import { getCycleDate } from './useCycleDate'
 
 /**
- * Hook to mark a para as completed via the atomic RPC function.
+ * Hook to mark a quarter-para slot as completed via the atomic RPC function.
  */
 export function useCompletePara() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  async function completePara(paraNumber) {
+  async function completePara(paraNumber, quarter) {
     if (!supabase) {
       setError('Supabase is not configured. Please add your credentials to .env.local')
       return null
@@ -21,13 +21,14 @@ export function useCompletePara() {
 
     try {
       const { data, error: rpcError } = await supabase.rpc('complete_para', {
-        p_user_id: getUserId(),
+        p_user_id:     getUserId(),
         p_para_number: paraNumber,
-        p_cycle_date: getCycleDate(),
+        p_quarter:     quarter,
+        p_cycle_date:  getCycleDate(),
       })
 
       if (rpcError) {
-        const message = rpcError.message || 'Failed to complete this para'
+        const message = rpcError.message || 'Failed to complete this slot'
         setError(message)
         return null
       }

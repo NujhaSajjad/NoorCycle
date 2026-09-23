@@ -9,7 +9,9 @@ import { useClaimPara } from '../hooks/useClaimPara'
 import { useCompletePara } from '../hooks/useCompletePara'
 import { getFormattedDate } from '../hooks/useCycleDate'
 import { getUserId } from '../lib/userId'
-import { PARA_NAMES } from '../data/paraNames'
+import { PARA_NAMES, QUARTER_LABELS } from '../data/paraNames'
+
+const TOTAL_SLOTS = 120 // 30 paras × 4 quarters
 
 export default function QuranCyclePage() {
   const navigate = useNavigate()
@@ -21,25 +23,39 @@ export default function QuranCyclePage() {
   const now = new Date()
   const completedCount = paras.filter(p => p.status === 'completed').length
   const pendingCount   = paras.filter(p => p.status === 'pending' && p.expires_at && new Date(p.expires_at) >= now).length
-  const availableCount = 30 - completedCount - pendingCount
+  const availableCount = TOTAL_SLOTS - completedCount - pendingCount
 
-  const userActivePara    = paras.find(p => p.status === 'pending' && p.claimed_by === userId && p.expires_at && new Date(p.expires_at) >= now)
-  const userCompletedPara = paras.find(p => p.status === 'completed' && p.claimed_by === userId)
-  const isCycleFull       = availableCount <= 0 && !userActivePara
+  const userActiveSlot    = paras.find(p => p.status === 'pending' && p.claimed_by === userId && p.expires_at && new Date(p.expires_at) >= now)
+  const userCompletedSlot = paras.find(p => p.status === 'completed' && p.claimed_by === userId)
+  const isCycleFull       = availableCount <= 0 && !userActiveSlot
 
-  async function handleClaim(paraNumber) {
-    const result = await claimPara(paraNumber)
+  // Helper: get display name for a slot
+  function slotLabel(slot) {
+    if (!slot) return ''
+    const paraName    = PARA_NAMES.find(p => p.number === slot.para_number)
+    const quarterInfo = QUARTER_LABELS.find(q => q.quarter === slot.quarter)
+    return `Para ${slot.para_number} – ${quarterInfo?.english ?? `Qtr ${slot.quarter}`}`
+  }
+
+  async function handleClaim(paraNumber, quarter) {
+    const result = await claimPara(paraNumber, quarter)
     if (result) {
-      // Navigate to confirmation screen
-      const paraName = PARA_NAMES.find(p => p.number === paraNumber)
-      navigate('/confirmed', { state: { paraNumber, paraName } })
+      const paraName    = PARA_NAMES.find(p => p.number === paraNumber)
+      const quarterInfo = QUARTER_LABELS.find(q => q.quarter === quarter)
+      navigate('/confirmed', { state: { paraNumber, quarter, paraName, quarterInfo } })
     }
   }
 
-  async function handleComplete(paraNumber) {
-    const result = await completePara(paraNumber)
+  async function handleComplete(paraNumber, quarter) {
+    const result = await completePara(paraNumber, quarter)
     if (result) refetch()
   }
+
+  // Group paras by para_number for a clean grouped layout (30 groups × 4 cards)
+  const groupedParas = PARA_NAMES.map(pn => ({
+    para: pn,
+    slots: paras.filter(p => p.para_number === pn.number).sort((a, b) => a.quarter - b.quarter),
+  }))
 
   return (
     <div className="min-h-dvh bg-blush flex flex-col safe-top safe-bottom">
@@ -73,8 +89,8 @@ export default function QuranCyclePage() {
             <p className="text-xs text-text-muted mt-0.5">{getFormattedDate()}</p>
           </div>
 
-          {/* Progress */}
-          <ProgressBar completed={completedCount} total={30} />
+          {/* Progress — out of 120 */}
+          <ProgressBar completed={completedCount} total={TOTAL_SLOTS} />
 
           {/* Stats row */}
           <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
@@ -89,6 +105,8 @@ export default function QuranCyclePage() {
             <span>
               <span className="font-semibold text-text">{completedCount}</span> Done
             </span>
+            <span className="text-border">|</span>
+            <span className="text-text-light">of {TOTAL_SLOTS}</span>
           </div>
         </div>
       </header>
@@ -97,19 +115,19 @@ export default function QuranCyclePage() {
       <main className="flex-1 overflow-y-auto px-5 py-4 max-w-xl mx-auto w-full">
 
         {/* Contextual banners */}
-        {userActivePara && (
+        {userActiveSlot && (
           <div className="mb-4 bg-rose-muted/20 border border-rose-muted/40 rounded-[14px] px-4 py-3 animate-slide-up">
             <p className="text-xs font-semibold text-rose-dark mb-0.5">
-              You're reading Para {userActivePara.para_number}
+              You're reading {slotLabel(userActiveSlot)}
             </p>
-            <p className="text-xs text-text-muted">Scroll down to find your para and mark it as read.</p>
+            <p className="text-xs text-text-muted">Scroll down to find your slot and mark it as read.</p>
           </div>
         )}
 
-        {userCompletedPara && !userActivePara && (
+        {userCompletedSlot && !userActiveSlot && (
           <div className="mb-4 bg-blush-deep border border-border rounded-[14px] px-4 py-3 animate-slide-up">
             <p className="text-xs font-semibold text-plum mb-0.5">
-              JazakAllah Khair! Para {userCompletedPara.para_number} completed ✓
+              JazakAllah Khair! {slotLabel(userCompletedSlot)} completed ✓
             </p>
             <p className="text-xs text-text-muted">Come back tomorrow for the next cycle.</p>
           </div>
@@ -132,24 +150,53 @@ export default function QuranCyclePage() {
         )}
 
         {/* Full cycle */}
-        {!loading && !parasError && isCycleFull && !userCompletedPara && (
+        {!loading && !parasError && isCycleFull && !userCompletedSlot && (
           <CycleFullBanner />
         )}
 
-        {/* Para list */}
+        {/* Grouped para list: 30 groups, each with 4 quarter cards */}
         {!loading && !parasError && paras.length > 0 && (
-          <div className="space-y-2 pb-10">
-            {paras.map(para => (
-              <ParaCard
-                key={para.para_number}
-                para={para}
-                userId={userId}
-                onClaim={handleClaim}
-                onComplete={handleComplete}
-                claimLoading={claimLoading}
-                completeLoading={completeLoading}
-                staggerIndex={para.para_number}
-              />
+          <div className="space-y-5 pb-10">
+            {groupedParas.map(({ para, slots }) => (
+              <div key={para.number} id={`group-para-${para.number}`}>
+                {/* Para group header */}
+                <div className="flex items-center gap-2 mb-2 px-1">
+                  <span className="w-6 h-6 rounded-md bg-plum/10 flex items-center justify-center text-[10px] font-bold text-plum flex-shrink-0">
+                    {para.number}
+                  </span>
+                  <p className="text-sm font-semibold text-plum leading-tight flex-1 truncate">
+                    {para.english}
+                  </p>
+                  <p className="text-xs text-text-muted" dir="rtl" style={{ fontFamily: 'system-ui,-apple-system,sans-serif' }}>
+                    {para.arabic}
+                  </p>
+                </div>
+
+                {/* 4 quarter cards */}
+                <div className="space-y-1.5">
+                  {slots.length > 0
+                    ? slots.map(slot => (
+                        <ParaCard
+                          key={`${slot.para_number}-${slot.quarter}`}
+                          para={slot}
+                          userId={userId}
+                          onClaim={handleClaim}
+                          onComplete={handleComplete}
+                          claimLoading={claimLoading}
+                          completeLoading={completeLoading}
+                          staggerIndex={(slot.para_number - 1) * 4 + slot.quarter}
+                        />
+                      ))
+                    : // Skeleton placeholders while data loads for this group
+                      [1, 2, 3, 4].map(q => (
+                        <div
+                          key={q}
+                          className="rounded-[16px] px-4 py-3.5 bg-surface border border-border-light opacity-40 h-14"
+                        />
+                      ))
+                  }
+                </div>
+              </div>
             ))}
           </div>
         )}

@@ -34,3 +34,30 @@ export const PARA_NAMES = [
   { number: 29, arabic: 'تَبَارَكَ الَّذِي',  english: 'Tabarakallazi' },
   { number: 30, arabic: 'عَمَّ',            english: 'Amma' },
 ]
+
+/**
+ * Labels for each quarter (rub') of a para.
+ * Quarter number is 1-indexed.
+ */
+export const QUARTER_LABELS = [
+  { quarter: 1, english: '1st Quarter', arabic: 'الرُّبُعُ الأَوَّل' },
+  { quarter: 2, english: '2nd Quarter', arabic: 'الرُّبُعُ الثَّانِي' },
+  { quarter: 3, english: '3rd Quarter', arabic: 'الرُّبُعُ الثَّالِث' },
+  { quarter: 4, english: '4th Quarter', arabic: 'الرُّبُعُ الرَّابِع' },
+]
+
+/**
+ * All 120 quarter-para slots (30 paras × 4 quarters each).
+ * Each entry: { para_number, quarter, paraEnglish, paraArabic, quarterEnglish, quarterArabic }
+ */
+export const PARA_QUARTERS = PARA_NAMES.flatMap(para =>
+  QUARTER_LABELS.map(q => ({
+    para_number: para.number,
+    quarter: q.quarter,
+    paraEnglish: para.english,
+    paraArabic: para.arabic,
+    quarterEnglish: q.english,
+    quarterArabic: q.arabic,
+  }))
+)
+

@@ -1,8 +1,11 @@
 import CountdownTimer from './CountdownTimer'
-import { PARA_NAMES } from '../data/paraNames'
+import { PARA_NAMES, QUARTER_LABELS } from '../data/paraNames'
 
 /**
- * Para card styled to match the Ivoria design:
+ * Quarter-Para card styled to match the Ivoria design.
+ * Displays para name + quarter label for each of the 120 slots.
+ *
+ * States:
  * - Completed: blush-pink background, "Completed ✓" right-aligned
  * - Available: white background, "Contribute →" pill button
  * - Pending (other): muted background, "Reading…" label
@@ -12,11 +15,12 @@ export default function ParaCard({
   para, userId, onClaim, onComplete,
   claimLoading, completeLoading, staggerIndex,
 }) {
-  const name     = PARA_NAMES.find(p => p.number === para.para_number)
-  const isMine   = para.claimed_by === userId
-  const expired  = para.status === 'pending' && para.expires_at && new Date(para.expires_at) < new Date()
-  const status   = (para.status === 'pending' && expired) ? 'available' : para.status
-  const pendingMe = status === 'pending' && isMine
+  const paraName    = PARA_NAMES.find(p => p.number === para.para_number)
+  const quarterInfo = QUARTER_LABELS.find(q => q.quarter === para.quarter)
+  const isMine      = para.claimed_by === userId
+  const expired     = para.status === 'pending' && para.expires_at && new Date(para.expires_at) < new Date()
+  const status      = (para.status === 'pending' && expired) ? 'available' : para.status
+  const pendingMe   = status === 'pending' && isMine
 
   /* ---- card styling ---- */
   const cardClass = {
@@ -30,7 +34,7 @@ export default function ParaCard({
   return (
     <div
       className={`rounded-[16px] px-4 py-3.5 flex items-center gap-3 transition-all duration-300 opacity-0 animate-fade-in-up stagger-${staggerIndex} ${cardClass}`}
-      id={`para-${para.para_number}`}
+      id={`para-${para.para_number}-q${para.quarter}`}
     >
       {/* Number badge */}
       <span className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold ${
@@ -46,7 +50,15 @@ export default function ParaCard({
         <p className={`text-sm font-medium leading-tight truncate ${
           status === 'completed' ? 'text-text-muted' : 'text-text'
         }`}>
-          {name?.english ?? `Para ${para.para_number}`}
+          {paraName?.english ?? `Para ${para.para_number}`}
+        </p>
+        {/* Quarter label */}
+        <p className={`text-xs mt-0.5 ${
+          status === 'completed' ? 'text-text-light' :
+          pendingMe             ? 'text-rose-dark/70' :
+                                  'text-text-muted'
+        }`}>
+          {quarterInfo?.english ?? `Quarter ${para.quarter}`}
         </p>
         {pendingMe && para.expires_at && (
           <div className="mt-0.5">
@@ -57,9 +69,9 @@ export default function ParaCard({
 
       {/* Right side: Arabic name + action */}
       <div className="flex-shrink-0 flex flex-col items-end gap-1.5 ml-1">
-        {/* Arabic */}
+        {/* Arabic para name */}
         <p className="text-xs text-text-muted font-medium" dir="rtl" style={{ fontFamily: 'system-ui,-apple-system,sans-serif' }}>
-          {name?.arabic}
+          {paraName?.arabic}
         </p>
 
         {/* Action */}
@@ -71,10 +83,10 @@ export default function ParaCard({
 
         {status === 'available' && (
           <button
-            onClick={() => onClaim(para.para_number)}
+            onClick={() => onClaim(para.para_number, para.quarter)}
             disabled={claimLoading}
             className="text-xs font-medium text-rose border border-rose/40 hover:bg-rose hover:text-white active:scale-[0.97] px-3 py-1 rounded-pill transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1"
-            id={`claim-${para.para_number}`}
+            id={`claim-${para.para_number}-q${para.quarter}`}
           >
             {claimLoading ? '…' : 'Contribute →'}
           </button>
@@ -86,10 +98,10 @@ export default function ParaCard({
 
         {pendingMe && (
           <button
-            onClick={() => onComplete(para.para_number)}
+            onClick={() => onComplete(para.para_number, para.quarter)}
             disabled={completeLoading}
             className="text-xs font-medium bg-rose hover:bg-rose-dark text-white active:scale-[0.97] px-3 py-1 rounded-pill transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
-            id={`complete-${para.para_number}`}
+            id={`complete-${para.para_number}-q${para.quarter}`}
           >
             {completeLoading ? '…' : 'Mark as Read'}
           </button>

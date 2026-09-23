@@ -9,8 +9,10 @@ import logo from '../assets/logo.png'
 export default function ConfirmationPage() {
   const navigate  = useNavigate()
   const { state } = useLocation()
-  const paraNumber = state?.paraNumber ?? '—'
-  const paraName   = state?.paraName
+  const paraNumber  = state?.paraNumber ?? '—'
+  const paraName    = state?.paraName
+  const quarter     = state?.quarter
+  const quarterInfo = state?.quarterInfo
 
   return (
     <div className="relative min-h-dvh bg-blush overflow-hidden flex flex-col items-center justify-between px-6 py-12 safe-top safe-bottom">
@@ -56,7 +58,9 @@ export default function ConfirmationPage() {
               <p className="text-sm font-semibold text-text leading-tight">
                 {paraName?.english ?? `Para ${paraNumber}`}
               </p>
-              <p className="text-xs text-text-muted mt-0.5">Added to today's cycle</p>
+              <p className="text-xs text-text-muted mt-0.5">
+                {quarterInfo?.english ?? (quarter ? `Quarter ${quarter}` : 'Added to today\'s cycle')}
+              </p>
             </div>
             <div className="flex-shrink-0 flex flex-col items-end gap-1">
               <p className="text-xs text-text-muted" dir="rtl" style={{ fontFamily: 'system-ui,-apple-system,sans-serif' }}>
@@ -75,7 +79,7 @@ export default function ConfirmationPage() {
           className="animate-fade-in-up text-xs text-text-light italic mb-10"
           style={{ animationDelay: '0.40s' }}
         >
-          one para closer
+          one quarter closer
         </p>
 
         {/* Actions */}

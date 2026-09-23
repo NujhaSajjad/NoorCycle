@@ -1,17 +1,19 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { getCycleDate } from './useCycleDate'
-import { PARA_NAMES } from '../data/paraNames'
+import { PARA_QUARTERS } from '../data/paraNames'
 
 /**
  * Generates mock data for development when Supabase is not configured.
+ * Returns 120 rows: 30 paras × 4 quarters each.
  */
 function generateMockParas() {
   const cycleDate = getCycleDate()
-  return PARA_NAMES.map((para) => ({
-    id: para.number,
+  return PARA_QUARTERS.map((slot, index) => ({
+    id: index + 1,
     cycle_date: cycleDate,
-    para_number: para.number,
+    para_number: slot.para_number,
+    quarter: slot.quarter,
     status: 'available',
     claimed_by: null,
     claimed_at: null,
@@ -21,8 +23,8 @@ function generateMockParas() {
 }
 
 /**
- * Determines if a pending para has expired based on server time.
- * Expired paras should be treated as available in the UI.
+ * Determines if a pending slot has expired based on server time.
+ * Expired slots should be treated as available in the UI.
  */
 function resolveParaStatus(para) {
   if (
@@ -36,7 +38,7 @@ function resolveParaStatus(para) {
 }
 
 /**
- * Hook to fetch and subscribe to realtime updates for today's paras.
+ * Hook to fetch and subscribe to realtime updates for today's quarter-para slots.
  */
 export function useParas() {
   const [paras, setParas] = useState([])
@@ -53,7 +55,7 @@ export function useParas() {
     }
 
     try {
-      // Initialize the daily cycle (idempotent)
+      // Initialize the daily cycle (idempotent — now inserts 120 rows)
       const { error: initError } = await supabase.rpc('initialize_daily_cycle', {
         target_date: cycleDate,
       })
@@ -61,12 +63,13 @@ export function useParas() {
         console.error('Error initializing cycle:', initError)
       }
 
-      // Fetch all paras for today
+      // Fetch all slots for today, ordered by para then quarter
       const { data, error: fetchError } = await supabase
         .from('daily_paras')
         .select('*')
         .eq('cycle_date', cycleDate)
         .order('para_number', { ascending: true })
+        .order('quarter', { ascending: true })
 
       if (fetchError) throw fetchError
 
@@ -100,17 +103,21 @@ export function useParas() {
           if (payload.eventType === 'INSERT') {
             setParas((prev) => {
               const exists = prev.find(
-                (p) => p.para_number === payload.new.para_number
+                (p) =>
+                  p.para_number === payload.new.para_number &&
+                  p.quarter === payload.new.quarter
               )
               if (exists) {
                 return prev.map((p) =>
-                  p.para_number === payload.new.para_number
+                  p.para_number === payload.new.para_number &&
+                  p.quarter === payload.new.quarter
                     ? resolveParaStatus(payload.new)
                     : p
                 )
               }
               return [...prev, resolveParaStatus(payload.new)].sort(
-                (a, b) => a.para_number - b.para_number
+                (a, b) =>
+                  a.para_number - b.para_number || a.quarter - b.quarter
               )
             })
           } else if (payload.eventType === 'UPDATE') {
