@@ -17,7 +17,7 @@ export default function CountdownTimer({ expiresAt }) {
       const h = Math.floor(diff / 3600000)
       const m = Math.floor((diff % 3600000) / 60000)
       const s = Math.floor((diff % 60000) / 1000)
-      setTimeLeft(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`)
+      setTimeLeft(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`)
       setIsUrgent(diff < 30 * 60 * 1000)
     }
     tick()
@@ -25,10 +25,26 @@ export default function CountdownTimer({ expiresAt }) {
     return () => clearInterval(id)
   }, [expiresAt])
 
+  const bg = isExpired ? 'var(--rose-tint)' : isUrgent ? 'var(--rose-tint)' : 'var(--cream)'
+  const color = isExpired ? 'var(--rose-deep)' : isUrgent ? 'var(--rose-deep)' : 'var(--ink-soft)'
+  const anim = isUrgent && !isExpired ? 'animate-pulse-slow' : ''
+
   return (
-    <span className={`inline-flex items-center gap-1 font-mono text-xs font-medium ${
-      isExpired ? 'text-rose' : isUrgent ? 'text-rose animate-pulse-slow' : 'text-text-muted'
-    }`}>
+    <span
+      className={anim}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px',
+        fontFamily: 'monospace',
+        fontSize: '0.68rem',
+        fontWeight: 600,
+        padding: '2px 6px',
+        borderRadius: '100px',
+        backgroundColor: bg,
+        color: color
+      }}
+    >
       <Clock size={11} />
       {timeLeft}
     </span>

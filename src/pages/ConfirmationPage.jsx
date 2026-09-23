@@ -2,10 +2,6 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { CheckCircle2 } from 'lucide-react'
 import logo from '../assets/logo.png'
 
-/**
- * Shown immediately after successfully claiming a para.
- * Matches the "JazakAllahu Khairan" screen in the Ivoria design.
- */
 export default function ConfirmationPage() {
   const navigate  = useNavigate()
   const { state } = useLocation()
@@ -15,89 +11,84 @@ export default function ConfirmationPage() {
   const quarterInfo = state?.quarterInfo
 
   return (
-    <div className="relative min-h-dvh bg-blush overflow-hidden flex flex-col items-center justify-between px-6 py-12 safe-top safe-bottom">
-
+    <div className="screen active" id="landing">
       {/* Decorative blobs */}
-      <div className="blob blob-sage-tr" />
-      <div className="blob blob-rose-bl" />
+      <div className="orb orb1"></div>
+      <div className="orb orb2"></div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 w-full max-w-sm mx-auto text-center">
+      <div className="landing-inner">
 
         {/* Logo */}
-        <div className="animate-fade-in-up mb-8" style={{ animationDelay: '0s' }}>
-          <img src={logo} alt="Ivoria" className="w-20 h-20 object-contain mx-auto" />
+        <div className="animate-fade-in-up" style={{ animationDelay: '0s', marginBottom: '32px' }}>
+          <img src={logo} alt="Ivoria" style={{ width: '80px', height: '80px', objectFit: 'contain', margin: '0 auto' }} />
         </div>
 
         {/* Heading */}
         <h1
-          className="animate-fade-in-up font-display text-3xl font-semibold text-plum mb-3 leading-tight"
-          style={{ animationDelay: '0.12s' }}
+          className="animate-fade-in-up"
+          style={{ animationDelay: '0.12s', fontFamily: "'Lora', serif", fontSize: '2rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '12px', lineHeight: 1.2 }}
         >
           JazakAllahu Khairan
         </h1>
 
         {/* Sub-heading */}
         <p
-          className="animate-fade-in-up text-sm text-text-muted leading-relaxed mb-10"
-          style={{ animationDelay: '0.20s' }}
+          className="animate-fade-in-up sub"
+          style={{ animationDelay: '0.20s', marginBottom: '40px' }}
         >
-          Your para is now part of today's<br />Quran cycle.
+          Your para is now part of today's<br />Qur'an cycle.
         </p>
 
         {/* Para card */}
         <div
-          className="animate-fade-in-up w-full bg-surface rounded-[16px] border border-border-light px-4 py-3.5 mb-3 text-left"
-          style={{ animationDelay: '0.30s' }}
+          className="animate-fade-in-up"
+          style={{ animationDelay: '0.30s', background: 'var(--card)', borderRadius: '16px', padding: '16px', border: '1px solid var(--line)', marginBottom: '12px', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '12px' }}
         >
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-lg bg-rose/15 flex items-center justify-center text-sm font-semibold text-rose flex-shrink-0">
-              {paraNumber}
+          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--rose-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 600, color: 'var(--rose)', flexShrink: 0 }}>
+            {paraNumber}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.2, margin: 0 }}>
+              {paraName?.english ?? `Para ${paraNumber}`}
+            </p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--ink-soft)', marginTop: '2px', margin: 0 }}>
+              {quarterInfo?.english ?? (quarter ? `Quarter ${quarter}` : "Added to today's cycle")}
+            </p>
+          </div>
+          <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--ink-soft)', margin: 0 }} dir="rtl">
+              {paraName?.arabic}
+            </p>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--rose)', fontWeight: 500 }}>
+              <CheckCircle2 size={12} />
+              Confirmed
             </span>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-text leading-tight">
-                {paraName?.english ?? `Para ${paraNumber}`}
-              </p>
-              <p className="text-xs text-text-muted mt-0.5">
-                {quarterInfo?.english ?? (quarter ? `Quarter ${quarter}` : 'Added to today\'s cycle')}
-              </p>
-            </div>
-            <div className="flex-shrink-0 flex flex-col items-end gap-1">
-              <p className="text-xs text-text-muted" dir="rtl" style={{ fontFamily: 'system-ui,-apple-system,sans-serif' }}>
-                {paraName?.arabic}
-              </p>
-              <span className="flex items-center gap-1 text-xs text-rose font-medium">
-                <CheckCircle2 size={11} />
-                Confirmed
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* "one para closer" label */}
+        {/* "one quarter closer" label */}
         <p
-          className="animate-fade-in-up text-xs text-text-light italic mb-10"
-          style={{ animationDelay: '0.40s' }}
+          className="animate-fade-in-up"
+          style={{ animationDelay: '0.40s', fontSize: '0.75rem', color: 'var(--ink-soft)', fontStyle: 'italic', marginBottom: '40px' }}
         >
           one quarter closer
         </p>
 
         {/* Actions */}
         <div
-          className="animate-fade-in-up w-full space-y-3"
-          style={{ animationDelay: '0.50s' }}
+          className="animate-fade-in-up"
+          style={{ animationDelay: '0.50s', width: '100%' }}
         >
           <button
             onClick={() => navigate('/cycle')}
-            className="w-full h-[52px] bg-plum hover:bg-plum-light active:scale-[0.98] text-white font-medium text-sm tracking-wide rounded-pill transition-all duration-200"
-            id="btn-back-to-cycle"
+            className="btn btn-primary"
           >
             Back to Today's Cycle
           </button>
           <button
             onClick={() => navigate('/cycle')}
-            className="w-full text-sm font-medium text-text-muted hover:text-text transition-colors py-2"
-            id="btn-view-progress"
+            style={{ width: '100%', background: 'none', border: 'none', padding: '12px', fontSize: '0.9rem', fontWeight: 500, color: 'var(--ink-soft)', cursor: 'pointer' }}
           >
             View Progress
           </button>

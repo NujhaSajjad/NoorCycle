@@ -7,115 +7,66 @@ export default function WelcomePage() {
   const [showComingSoon, setShowComingSoon] = useState(false)
 
   return (
-    <div className="relative min-h-dvh bg-blush overflow-hidden flex flex-col items-center justify-between px-6 py-12 safe-top safe-bottom">
-
-      {/* Decorative blobs */}
-      <div className="blob blob-sage-tr" />
-      <div className="blob blob-sage-br" />
-      <div className="blob blob-rose-bl" />
-
-      {/* Main content — centred */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 w-full max-w-sm mx-auto text-center gap-0">
-
-        {/* Logo */}
-        <div className="animate-fade-in-up mb-10" style={{ animationDelay: '0s' }}>
-          <img
-            src={logo}
-            alt="Ivoria logo"
-            className="w-24 h-24 object-contain mx-auto"
-          />
-        </div>
-
-        {/* Brand name */}
-        <h1
-          className="animate-fade-in-up font-display text-4xl tracking-[0.35em] font-semibold text-plum mb-3"
-          style={{ animationDelay: '0.12s', letterSpacing: '0.32em' }}
-        >
-          IVORIA
-        </h1>
-
-        {/* Tagline with decorative lines */}
-        <div
-          className="animate-fade-in-up flex items-center gap-3 mb-5"
-          style={{ animationDelay: '0.22s' }}
-        >
-          <div className="h-px w-8 bg-rose opacity-60" />
-          <p className="text-xs tracking-[0.2em] uppercase font-medium text-rose">
-            Read together. Grow together.
-          </p>
-          <div className="h-px w-8 bg-rose opacity-60" />
-        </div>
-
-        {/* Subtitle */}
-        <p
-          className="animate-fade-in-up text-sm text-text-muted leading-relaxed mb-16"
-          style={{ animationDelay: '0.30s' }}
-        >
-          Complete the Quran together,<br />one para at a time.
-        </p>
-
-        {/* Buttons */}
-        <div
-          className="animate-fade-in-up w-full space-y-3"
-          style={{ animationDelay: '0.40s' }}
-        >
-          {/* Primary */}
-          <button
-            onClick={() => setShowComingSoon(true)}
-            className="w-full h-[52px] bg-rose hover:bg-rose-dark active:scale-[0.98] text-white font-medium text-sm tracking-wide rounded-pill transition-all duration-200 shadow-sm"
-            id="btn-start-own-cycle"
-          >
-            Start a Quran Cycle
-          </button>
-
-          {/* Secondary */}
-          <button
-            onClick={() => navigate('/cycle')}
-            className="w-full h-[52px] bg-surface border border-border hover:border-rose active:scale-[0.98] text-text font-medium text-sm tracking-wide rounded-pill transition-all duration-200"
-            id="btn-contribute-today"
-          >
-            Contribute to Today's Cycle
-          </button>
+    <>
+      <div className="screen active" id="landing">
+        <div className="orb orb1"></div><div className="orb orb2"></div>
+        <div className="landing-inner">
+          <div className="mark">
+            <svg viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="46" stroke="#C17F93" strokeWidth="0.6" opacity="0.5"/>
+              <circle cx="50" cy="50" r="37" stroke="#C17F93" strokeWidth="0.6" opacity="0.6"/>
+              <circle cx="50" cy="50" r="28" stroke="#C17F93" strokeWidth="0.7" opacity="0.7"/>
+              <circle cx="50" cy="50" r="19" stroke="#C17F93" strokeWidth="0.8" opacity="0.85"/>
+              <circle cx="50" cy="50" r="10" stroke="#C17F93" strokeWidth="0.9"/>
+              <circle cx="50" cy="50" r="2" fill="#2B2130"/>
+            </svg>
+          </div>
+          <h1 className="wordmark">IVORIA</h1>
+          <p className="tagline"><span className="rule"></span>READ TOGETHER, GROW TOGETHER<span className="rule"></span></p>
+          <p className="sub">Complete the Qur'an together, one quarter-para at a time.</p>
+          <button className="btn btn-primary" onClick={() => setShowComingSoon(true)}>✦ Start a Qur'an Cycle</button>
+          <button className="btn btn-secondary" onClick={() => navigate('/cycle')}>Contribute to Today's Cycle</button>
+          <p className="meta"><b>30</b> paras · <b>120</b> quarters · one cycle, together</p>
         </div>
       </div>
 
       {/* Coming Soon overlay */}
       {showComingSoon && (
         <div
-          className="fixed inset-0 bg-plum/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-5 animate-fade-in"
+          className="fixed inset-0 bg-[#2B2130]/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-5 animate-fade-in"
           onClick={() => setShowComingSoon(false)}
+          style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(43,33,48,0.3)', backdropFilter: 'blur(4px)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
         >
           <div
-            className="bg-surface rounded-[24px] p-8 w-full max-w-sm text-center shadow-2xl animate-slide-up"
+            className="animate-slide-up"
+            style={{ backgroundColor: 'var(--card)', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '360px', textAlign: 'center', boxShadow: '0 20px 40px -10px rgba(43,33,48,0.2)' }}
             onClick={e => e.stopPropagation()}
           >
-            <div className="w-14 h-14 rounded-full bg-blush-deep flex items-center justify-center mx-auto mb-5">
-              <img src={logo} alt="" className="w-9 h-9 object-contain" />
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: 'var(--rose-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <img src={logo} alt="" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
             </div>
-            <h2 className="font-display text-2xl font-semibold text-plum mb-2">
+            <h2 style={{ fontFamily: "'Lora', serif", fontSize: '1.5rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '8px' }}>
               Coming Soon
             </h2>
-            <p className="text-sm text-text-muted mb-7 leading-relaxed">
-              The ability to start your own Quran cycle is on the way.
+            <p style={{ fontSize: '0.9rem', color: 'var(--ink-soft)', marginBottom: '28px', lineHeight: 1.6 }}>
+              The ability to start your own Qur'an cycle is on the way.
               For now, join today's community cycle!
             </p>
             <button
               onClick={() => navigate('/cycle')}
-              className="w-full h-[48px] bg-rose hover:bg-rose-dark text-white font-medium text-sm rounded-pill transition-all duration-200 mb-3"
-              id="btn-join-today-from-modal"
+              className="btn btn-primary"
             >
               Contribute to Today's Cycle
             </button>
             <button
               onClick={() => setShowComingSoon(false)}
-              className="text-sm text-text-muted hover:text-text transition-colors"
-              id="btn-close-coming-soon"
+              style={{ background: 'none', border: 'none', fontSize: '0.85rem', color: 'var(--ink-soft)', cursor: 'pointer', marginTop: '4px' }}
             >
               Maybe later
             </button>
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

@@ -1,111 +1,104 @@
+import { QUARTER_LABELS } from '../data/paraNames'
 import CountdownTimer from './CountdownTimer'
-import { PARA_NAMES, QUARTER_LABELS } from '../data/paraNames'
 
-/**
- * Quarter-Para card styled to match the Ivoria design.
- * Displays para name + quarter label for each of the 120 slots.
- *
- * States:
- * - Completed: blush-pink background, "Completed ✓" right-aligned
- * - Available: white background, "Contribute →" pill button
- * - Pending (other): muted background, "Reading…" label
- * - Pending (mine): highlighted, countdown + "Mark as Read" button
- */
 export default function ParaCard({
-  para, userId, onClaim, onComplete,
-  claimLoading, completeLoading, staggerIndex,
+  paraGroup,
+  userId,
+  onClaim,
+  onComplete,
+  claimLoading,
+  completeLoading,
+  staggerIndex
 }) {
-  const paraName    = PARA_NAMES.find(p => p.number === para.para_number)
-  const quarterInfo = QUARTER_LABELS.find(q => q.quarter === para.quarter)
-  const isMine      = para.claimed_by === userId
-  const expired     = para.status === 'pending' && para.expires_at && new Date(para.expires_at) < new Date()
-  const status      = (para.status === 'pending' && expired) ? 'available' : para.status
-  const pendingMe   = status === 'pending' && isMine
-
-  /* ---- card styling ---- */
-  const cardClass = {
-    available : 'bg-surface border border-border-light',
-    pending   : isMine
-      ? 'bg-rose-muted/20 border border-rose-muted'
-      : 'bg-pending-bg border border-border-light opacity-75',
-    completed : 'bg-completed-bg border border-completed-border',
-  }[status] ?? 'bg-surface border border-border-light'
+  const { para, slots } = paraGroup
+  // Calculate completed quarters
+  const doneCount = slots.filter(s => s.status === 'completed').length
+  const isMine = slots.some(s => s.status === 'pending' && s.claimed_by === userId)
+  
+  // Radial ring calculation
+  const r = 17
+  const ringC = 2 * Math.PI * r
+  const offset = ringC - (doneCount / 4) * ringC
 
   return (
     <div
-      className={`rounded-[16px] px-4 py-3.5 flex items-center gap-3 transition-all duration-300 opacity-0 animate-fade-in-up stagger-${staggerIndex} ${cardClass}`}
-      id={`para-${para.para_number}-q${para.quarter}`}
+      className={`para-card animate-fade-in-up stagger-${staggerIndex} ${isMine ? 'mine' : ''}`}
+      id={`para-${para.number}`}
     >
-      {/* Number badge */}
-      <span className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold ${
-        status === 'completed' ? 'bg-rose/15 text-rose' :
-        pendingMe             ? 'bg-rose/20 text-rose-dark' :
-                                'bg-blush-deep text-text-muted'
-      }`}>
-        {para.para_number}
-      </span>
-
-      {/* Names */}
-      <div className="flex-1 min-w-0">
-        <p className={`text-sm font-medium leading-tight truncate ${
-          status === 'completed' ? 'text-text-muted' : 'text-text'
-        }`}>
-          {paraName?.english ?? `Para ${para.para_number}`}
-        </p>
-        {/* Quarter label */}
-        <p className={`text-xs mt-0.5 ${
-          status === 'completed' ? 'text-text-light' :
-          pendingMe             ? 'text-rose-dark/70' :
-                                  'text-text-muted'
-        }`}>
-          {quarterInfo?.english ?? `Quarter ${para.quarter}`}
-        </p>
-        {pendingMe && para.expires_at && (
-          <div className="mt-0.5">
-            <CountdownTimer expiresAt={para.expires_at} />
-          </div>
-        )}
+      <div className="pc-head">
+        <div className="pc-ring">
+          <svg viewBox="0 0 40 40">
+            <circle className="pc-ring-track" cx="20" cy="20" r="17" />
+            <circle
+              className="pc-ring-fill"
+              cx="20"
+              cy="20"
+              r="17"
+              strokeDasharray={ringC}
+              strokeDashoffset={offset}
+            />
+          </svg>
+          <div className="pc-ring-num">{doneCount}/4</div>
+        </div>
+        <div className="pc-title">
+          <span className="name">Para {para.number} — {para.english}</span>
+          <span className="frac">
+            {doneCount === 4 ? 'Completed' : `${doneCount} of 4 quarters read`}
+          </span>
+        </div>
       </div>
 
-      {/* Right side: Arabic name + action */}
-      <div className="flex-shrink-0 flex flex-col items-end gap-1.5 ml-1">
-        {/* Arabic para name */}
-        <p className="text-xs text-text-muted font-medium" dir="rtl" style={{ fontFamily: 'system-ui,-apple-system,sans-serif' }}>
-          {paraName?.arabic}
-        </p>
+      <div className="pc-quarters">
+        {slots.map(slot => {
+          const qInfo = QUARTER_LABELS.find(q => q.quarter === slot.quarter)
+          const qName = qInfo?.english ?? `Quarter ${slot.quarter}`
+          
+          const expired = slot.status === 'pending' && slot.expires_at && new Date(slot.expires_at) < new Date()
+          const status = (slot.status === 'pending' && expired) ? 'available' : slot.status
+          
+          const pendingMe = status === 'pending' && slot.claimed_by === userId
 
-        {/* Action */}
-        {status === 'completed' && (
-          <span className="text-xs text-completed-text font-medium">
-            Completed ✓
-          </span>
-        )}
+          let cls = ''
+          let valTxt = ''
+          let onClick = undefined
 
-        {status === 'available' && (
-          <button
-            onClick={() => onClaim(para.para_number, para.quarter)}
-            disabled={claimLoading}
-            className="text-xs font-medium text-rose border border-rose/40 hover:bg-rose hover:text-white active:scale-[0.97] px-3 py-1 rounded-pill transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1"
-            id={`claim-${para.para_number}-q${para.quarter}`}
-          >
-            {claimLoading ? '…' : 'Contribute →'}
-          </button>
-        )}
+          if (status === 'available') {
+            cls = 'available'
+            valTxt = claimLoading ? '...' : 'Contribute'
+            onClick = () => onClaim(slot.para_number, slot.quarter)
+          } else if (status === 'pending') {
+            if (pendingMe) {
+              cls = 'reading'
+              valTxt = completeLoading ? '...' : 'Mark as read'
+              onClick = () => onComplete(slot.para_number, slot.quarter)
+            } else {
+              cls = 'other'
+              valTxt = 'Being read'
+            }
+          } else if (status === 'completed') {
+            cls = 'done'
+            valTxt = '✓ Done'
+          }
 
-        {status === 'pending' && !isMine && (
-          <span className="text-xs text-text-light">Reading…</span>
-        )}
-
-        {pendingMe && (
-          <button
-            onClick={() => onComplete(para.para_number, para.quarter)}
-            disabled={completeLoading}
-            className="text-xs font-medium bg-rose hover:bg-rose-dark text-white active:scale-[0.97] px-3 py-1 rounded-pill transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
-            id={`complete-${para.para_number}-q${para.quarter}`}
-          >
-            {completeLoading ? '…' : 'Mark as Read'}
-          </button>
-        )}
+          return (
+            <button
+              key={`${slot.para_number}-${slot.quarter}`}
+              className={`pc-q ${cls}`}
+              onClick={onClick}
+              disabled={(cls === 'available' && claimLoading) || (cls === 'reading' && completeLoading)}
+            >
+              <span className="lbl">{qName}</span>
+              {pendingMe && slot.expires_at ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <span className="val">{valTxt}</span>
+                  <CountdownTimer expiresAt={slot.expires_at} />
+                </div>
+              ) : (
+                <span className="val">{valTxt}</span>
+              )}
+            </button>
+          )
+        })}
       </div>
     </div>
   )

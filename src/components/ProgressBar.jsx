@@ -6,14 +6,17 @@ export default function ProgressBar({ completed, total }) {
         <span className="text-sm font-semibold text-text">
           {completed} / {total} paras completed
         </span>
-        <span className="text-xs font-medium text-text-muted">
+        <span className="text-xs font-semibold text-rose-dark">
           {Math.round(pct)}%
         </span>
       </div>
-      <div className="w-full h-1.5 bg-rose-muted/40 rounded-full overflow-hidden">
+      <div className="w-full h-2 bg-rose-muted/40 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
-          style={{ width: `${pct}%`, background: 'var(--color-rose)' }}
+          style={{
+            width: `${pct}%`,
+            background: 'linear-gradient(90deg, var(--color-rose), var(--color-rose-dark))',
+          }}
         />
       </div>
     </div>
