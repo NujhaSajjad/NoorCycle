@@ -564,3 +564,41 @@ h1.title {
 .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
 .animate-spin { animation: spin 0.8s linear infinite; }
 
+/* ---------- Login / Auth styles ---------- */
+input:focus {
+  outline: none;
+  border-color: var(--rose) !important;
+  box-shadow: 0 0 0 3px var(--rose-tint);
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--rose) !important;
+  box-shadow: 0 0 0 3px var(--rose-tint);
+}
+
+input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Slow pulse for urgent timers */
+@keyframes pulseSlow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+.animate-pulse-slow { animation: pulseSlow 2s ease-in-out infinite; }
+
+/* Stagger animation delays for card lists */
+.stagger-1  { animation-delay: 0.04s; }
+.stagger-2  { animation-delay: 0.08s; }
+.stagger-3  { animation-delay: 0.12s; }
+.stagger-4  { animation-delay: 0.16s; }
+.stagger-5  { animation-delay: 0.20s; }
+.stagger-6  { animation-delay: 0.24s; }
+.stagger-7  { animation-delay: 0.28s; }
+.stagger-8  { animation-delay: 0.32s; }
+.stagger-9  { animation-delay: 0.36s; }
+.stagger-10 { animation-delay: 0.40s; }
+
+

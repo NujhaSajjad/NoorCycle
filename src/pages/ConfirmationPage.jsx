@@ -2,6 +2,13 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { CheckCircle2 } from 'lucide-react'
 import logo from '../assets/logo.png'
 
+function fmtDuration(secs) {
+  if (!secs) return null
+  const m = Math.floor(secs / 60)
+  const s = secs % 60
+  return m > 0 ? `${m}m ${s}s` : `${s}s`
+}
+
 export default function ConfirmationPage() {
   const navigate  = useNavigate()
   const { state } = useLocation()
@@ -9,6 +16,7 @@ export default function ConfirmationPage() {
   const paraName    = state?.paraName
   const quarter     = state?.quarter
   const quarterInfo = state?.quarterInfo
+  const duration    = state?.duration ? fmtDuration(state.duration) : null
 
   return (
     <div className="screen active" id="landing">
@@ -37,7 +45,7 @@ export default function ConfirmationPage() {
           className="animate-fade-in-up sub"
           style={{ animationDelay: '0.20s', marginBottom: '40px' }}
         >
-          Your para is now part of today's<br />Qur'an cycle.
+          Your reading is recorded for today's<br />Qur'an cycle.
         </p>
 
         {/* Para card */}
@@ -72,7 +80,7 @@ export default function ConfirmationPage() {
           className="animate-fade-in-up"
           style={{ animationDelay: '0.40s', fontSize: '0.75rem', color: 'var(--ink-soft)', fontStyle: 'italic', marginBottom: '40px' }}
         >
-          one quarter closer
+          one quarter closer{duration ? ` · read in ${duration}` : ''}
         </p>
 
         {/* Actions */}

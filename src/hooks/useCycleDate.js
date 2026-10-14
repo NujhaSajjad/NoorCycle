@@ -20,3 +20,17 @@ export function getFormattedDate() {
     day: 'numeric',
   })
 }
+
+/**
+ * Returns the 1-based programme day given a start date string (YYYY-MM-DD).
+ * Returns 1 if today is before the start date.
+ */
+export function getProgramDay(startDateStr) {
+  const start = new Date(startDateStr)
+  start.setHours(0, 0, 0, 0)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const diffDays = Math.floor((today - start) / 86400000)
+  return Math.max(1, diffDays + 1)
+}
+
