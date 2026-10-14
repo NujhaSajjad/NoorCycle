@@ -1,5 +1,9 @@
 /**
  * useDailyLog — start_reading and complete_reading RPCs.
+ *
+ * V4 change: p_participant_number is no longer sent to the server.
+ * The RPC derives participant identity from auth.uid() server-side,
+ * eliminating the impersonation vector that existed in V3.
  */
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
@@ -9,7 +13,7 @@ export function useDailyLog() {
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
 
-  async function startReading(participantNumber) {
+  async function startReading() {
     if (!supabase) {
       setError('Supabase not configured')
       return null
@@ -18,8 +22,7 @@ export function useDailyLog() {
     setError(null)
     try {
       const { data, error: rpcErr } = await supabase.rpc('start_reading', {
-        p_participant_number: participantNumber,
-        p_date:               getCycleDate(),
+        p_date: getCycleDate(),
       })
       if (rpcErr) throw rpcErr
       return data
@@ -31,7 +34,7 @@ export function useDailyLog() {
     }
   }
 
-  async function completeReading(participantNumber, durationSeconds = null) {
+  async function completeReading(durationSeconds = null) {
     if (!supabase) {
       setError('Supabase not configured')
       return null
@@ -40,9 +43,8 @@ export function useDailyLog() {
     setError(null)
     try {
       const { data, error: rpcErr } = await supabase.rpc('complete_reading', {
-        p_participant_number: participantNumber,
-        p_date:               getCycleDate(),
-        p_duration_seconds:   durationSeconds,
+        p_date:             getCycleDate(),
+        p_duration_seconds: durationSeconds,
       })
       if (rpcErr) throw rpcErr
       return data

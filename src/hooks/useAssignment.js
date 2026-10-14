@@ -1,17 +1,14 @@
 /**
- * useAssignment — fetches (or computes locally) the participant's
- * assigned Para + quarter for a given date.
+ * useAssignment — fetches the participant's assigned Para + quarter for today.
  *
- * Primary path: call get_my_log() RPC which also initialises the row.
- * Fallback (offline / mock): compute locally from the formula.
+ * V4 change: p_participant_number is no longer passed to get_my_log.
+ * The RPC derives participant identity from auth.uid() server-side.
+ * The returned log row contains the server-authoritative participant_number.
  */
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { getCycleDate } from './useCycleDate'
 import { PARA_NAMES, QUARTER_LABELS } from '../data/paraNames'
-
-// Program start date fallback (overridden by backend config)
-const DEFAULT_START = '2024-01-01'
 
 /**
  * Given a 1-based part number (1–120), return {para_number, quarter}.
@@ -23,7 +20,7 @@ export function partToParaQuarter(partNumber) {
 }
 
 /**
- * Compute assignment locally (used for mock / offline mode).
+ * Compute assignment locally (offline / dev mock only).
  */
 export function computeAssignment(participantNumber, programDay) {
   const partNumber = ((participantNumber - 1 + programDay - 1) % 120) + 1
@@ -31,9 +28,9 @@ export function computeAssignment(participantNumber, programDay) {
 }
 
 export function useAssignment(participantNumber) {
-  const [log, setLog]       = useState(null)
+  const [log, setLog]         = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError]   = useState(null)
+  const [error, setError]     = useState(null)
 
   const today = getCycleDate()
 
@@ -44,7 +41,7 @@ export function useAssignment(participantNumber) {
     setError(null)
 
     if (!supabase) {
-      // Offline / dev mock: compute locally, assume day 1
+      // Offline / dev mock: compute locally using day 1
       const { para_number, quarter, partNumber } = computeAssignment(participantNumber, 1)
       setLog({
         participant_number: participantNumber,
@@ -62,9 +59,9 @@ export function useAssignment(participantNumber) {
     }
 
     try {
+      // V4: no p_participant_number — server derives it from auth.uid()
       const { data, error: rpcErr } = await supabase.rpc('get_my_log', {
-        p_participant_number: participantNumber,
-        p_date:               today,
+        p_date: today,
       })
       if (rpcErr) throw rpcErr
       setLog(data)
@@ -79,7 +76,7 @@ export function useAssignment(participantNumber) {
   useEffect(() => { fetchLog() }, [fetchLog])
 
   // Enrich log with display labels
-  const paraName    = log ? PARA_NAMES.find(p => p.number === log.para_number) : null
+  const paraName    = log ? PARA_NAMES.find(p => p.number === log.para_number)  : null
   const quarterInfo = log ? QUARTER_LABELS.find(q => q.quarter === log.quarter) : null
 
   const refetch = useCallback(() => {

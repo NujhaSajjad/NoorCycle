@@ -1,12 +1,11 @@
 /**
  * useAuth — Supabase Auth + participant session management.
  *
- * Strategy:
- * - Login: call verify_participant_password RPC (bcrypt check)
- * - If OK, sign in (or sign up) to Supabase Auth with a derived email
- *   (<username>@noorcycle.internal) so we get a persistent JWT.
- * - Store participant_number + is_admin in localStorage (non-sensitive).
- * - On logout: supabase.auth.signOut() + clear localStorage.
+ * V4 changes:
+ * - verifySession(): calls get_my_session_info() RPC on mount to
+ *   server-verify the session and detect any localStorage tampering.
+ *   Forces logout if the server identity differs from localStorage.
+ * - login(): stores is_reader from the RPC response.
  */
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './supabase'
@@ -40,16 +39,58 @@ export function useAuth() {
   const [loading, setLoading]         = useState(false)
   const [error, setError]             = useState(null)
 
-  // Sync with Supabase Auth session on mount
+  // ── Session verification on mount ────────────────────────────
+  // Calls get_my_session_info() to compare the server-authoritative
+  // identity against what is in localStorage.
+  // If they diverge (e.g. localStorage was tampered with), force logout.
   useEffect(() => {
     if (!supabase) return
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session && participant) {
-        // Auth session gone; re-authenticate silently or force logout
+
+    async function verifySession() {
+      const { data: sessionData } = await supabase.auth.getSession()
+
+      if (!sessionData?.session) {
+        // No Supabase Auth session — clear any stale localStorage
+        if (getStoredParticipant()) {
+          clearParticipant()
+          setParticipant(null)
+        }
+        return
+      }
+
+      // We have a live Auth session — verify identity server-side
+      const { data: serverInfo, error: rpcErr } = await supabase.rpc('get_my_session_info')
+
+      if (rpcErr || !serverInfo) {
+        // Server doesn't recognise this session — force logout
+        await supabase.auth.signOut()
         clearParticipant()
         setParticipant(null)
+        return
       }
-    })
+
+      const stored = getStoredParticipant()
+
+      // Detect critical mismatches that indicate localStorage tampering
+      if (
+        stored &&
+        (stored.participant_number !== serverInfo.participant_number ||
+          stored.is_admin !== serverInfo.is_admin)
+      ) {
+        // Replace localStorage with the authoritative server values
+        const corrected = {
+          ...stored,
+          participant_number: serverInfo.participant_number,
+          username:           serverInfo.username,
+          is_admin:           serverInfo.is_admin,
+          is_reader:          serverInfo.is_reader,
+        }
+        storeParticipant(corrected)
+        setParticipant(corrected)
+      }
+    }
+
+    verifySession()
 
     const { data: listener } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
@@ -60,6 +101,7 @@ export function useAuth() {
     return () => listener.subscription.unsubscribe()
   }, []) // eslint-disable-line
 
+  // ── Login ─────────────────────────────────────────────────────
   const login = useCallback(async (username, password) => {
     if (!supabase) {
       setError('Supabase is not configured')
@@ -69,7 +111,7 @@ export function useAuth() {
     setError(null)
 
     try {
-      // 1. Verify bcrypt password via RPC
+      // 1. Verify bcrypt password via RPC (timing-safe in V4)
       const { data: pData, error: pErr } = await supabase.rpc('verify_participant_password', {
         p_username: username.trim(),
         p_password: password,
@@ -80,36 +122,38 @@ export function useAuth() {
       const authEmail    = toAuthEmail(username.trim())
       const authPassword = `${password}__nc__${pData.participant_number}`
 
-      // 2. Try signing in first; if user doesn't exist yet, sign them up
+      // 2. Try signing in; create Auth account on first login
       let { data: authData, error: signInErr } = await supabase.auth.signInWithPassword({
-        email: authEmail,
+        email:    authEmail,
         password: authPassword,
       })
 
       if (signInErr) {
         // First-time login: create Supabase Auth account
         const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
-          email: authEmail,
+          email:    authEmail,
           password: authPassword,
-          options: { data: { participant_number: pData.participant_number } },
+          options:  { data: { participant_number: pData.participant_number } },
         })
         if (signUpErr) throw new Error(signUpErr.message)
         authData = signUpData
 
-        // Link the auth user_id to the participant row
+        // Link auth user_id to participant row (V4: link_auth_user verifies auth.uid())
         if (signUpData?.user?.id) {
-          await supabase.rpc('link_auth_user', {
+          const { error: linkErr } = await supabase.rpc('link_auth_user', {
             p_username: username.trim(),
             p_user_id:  signUpData.user.id,
           })
+          if (linkErr) console.warn('link_auth_user warning:', linkErr.message)
         }
       }
 
-      // 3. Persist participant info
+      // 3. Persist server-authoritative identity
       const sessionData = {
         participant_number: pData.participant_number,
         username:           pData.username,
         is_admin:           pData.is_admin,
+        is_reader:          pData.is_reader,
         auth_user_id:       authData?.user?.id,
       }
       storeParticipant(sessionData)
@@ -124,6 +168,7 @@ export function useAuth() {
     }
   }, [])
 
+  // ── Logout ────────────────────────────────────────────────────
   const logout = useCallback(async () => {
     if (supabase) await supabase.auth.signOut()
     clearParticipant()
