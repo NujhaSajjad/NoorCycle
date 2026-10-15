@@ -17,7 +17,7 @@
   box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --cream: #211A25;
     --card: #2A222F;
@@ -45,9 +45,11 @@
   --sage-tint: #2A3025;
   --line: #3A2F38;
   --gold: #D8B876;
-}
+} */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -126,8 +128,15 @@ body {
 }
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .mark {
@@ -141,8 +150,15 @@ body {
 }
 
 @keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.035); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.035);
+  }
 }
 
 .mark svg {
@@ -384,11 +400,15 @@ h1.title {
 }
 
 @media (min-width: 620px) {
-  .list { grid-template-columns: 1fr 1fr; }
+  .list {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (min-width: 960px) {
-  .list { grid-template-columns: 1fr 1fr 1fr; }
+  .list {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
 
 .para-card {
@@ -545,24 +565,60 @@ h1.title {
 
 /* Animations for React conditional rendering */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
+
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
-.animate-fade-in-up { animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
-.animate-fade-in { animation: fadeIn 0.4s ease both; }
-.animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
-.animate-spin { animation: spin 0.8s linear infinite; }
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease both;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-spin {
+  animation: spin 0.8s linear infinite;
+}
 
 /* ---------- Login / Auth styles ---------- */
 input:focus {
@@ -584,21 +640,58 @@ input:disabled {
 
 /* Slow pulse for urgent timers */
 @keyframes pulseSlow {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.55; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
 }
-.animate-pulse-slow { animation: pulseSlow 2s ease-in-out infinite; }
+
+.animate-pulse-slow {
+  animation: pulseSlow 2s ease-in-out infinite;
+}
 
 /* Stagger animation delays for card lists */
-.stagger-1  { animation-delay: 0.04s; }
-.stagger-2  { animation-delay: 0.08s; }
-.stagger-3  { animation-delay: 0.12s; }
-.stagger-4  { animation-delay: 0.16s; }
-.stagger-5  { animation-delay: 0.20s; }
-.stagger-6  { animation-delay: 0.24s; }
-.stagger-7  { animation-delay: 0.28s; }
-.stagger-8  { animation-delay: 0.32s; }
-.stagger-9  { animation-delay: 0.36s; }
-.stagger-10 { animation-delay: 0.40s; }
+.stagger-1 {
+  animation-delay: 0.04s;
+}
 
+.stagger-2 {
+  animation-delay: 0.08s;
+}
 
+.stagger-3 {
+  animation-delay: 0.12s;
+}
+
+.stagger-4 {
+  animation-delay: 0.16s;
+}
+
+.stagger-5 {
+  animation-delay: 0.20s;
+}
+
+.stagger-6 {
+  animation-delay: 0.24s;
+}
+
+.stagger-7 {
+  animation-delay: 0.28s;
+}
+
+.stagger-8 {
+  animation-delay: 0.32s;
+}
+
+.stagger-9 {
+  animation-delay: 0.36s;
+}
+
+.stagger-10 {
+  animation-delay: 0.40s;
+}
